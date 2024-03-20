@@ -3,9 +3,10 @@ from pygame.locals import *
 from sys import exit
 from random import randint
 
+# iniciando a fução
 pygame.init()
 
-#configrurando tela
+# configrurando tela
 largaura = 800
 altura = 600
 tela = pygame.display.set_mode((largaura, altura))
@@ -19,6 +20,11 @@ y_cobra = altura/2
 x_maca = randint(40, 760)
 y_maca = randint(50, 550)
 tamanho_inicial = 5
+
+# variaveis de controle
+velocidade = 10
+x_controle = velocidade
+y_controle = 0
 
 # confugruração inicial do contador de pontos
 pontos = 0
@@ -36,7 +42,7 @@ def aumenta_cobra(lista_cobra):
 while True:
 
     # fps 2
-    relogio.tick(30)
+    relogio.tick(60)
 
     # deixar a tela branca
     tela.fill((255, 255, 255))
@@ -44,18 +50,51 @@ while True:
     # texto do placar de pontos
     texto = fonte.render(f'Pontos: {pontos}', True, (0, 0, 0))
     
-    # verifica se o jogo foi fechado
+    # verifica os eventos que ocorreram durante a iteração
     for event in pygame.event.get():
+        
+        # verifica se o jogo foi fechado
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
+        
+        # controla a cobra
+        # é feito dessa maneira para que a cobra ande somente de forma reta 
+        if event.type == KEYDOWN:
+            
+            # se a tecla apertada for 'a' e a cobra estiver indo pra direita o comando não poderá ser executado
+            if event.key == K_a:
+                if x_controle == velocidade:
+                    pass
+                else:
+                    x_controle = -velocidade
+                    y_controle = 0
+            if event.key == K_d:
+                if x_controle == -velocidade:
+                    pass
+                else:
+                    x_controle = velocidade
+                    y_controle = 0
+            if event.key == K_w:
+                if y_controle == velocidade:
+                    pass
+                else:
+                    x_controle = 0
+                    y_controle = -velocidade
+            if event.key == K_s:
+                if y_controle == -velocidade:
+                    pass
+                else:
+                    x_controle = 0
+                    y_controle = velocidade
+    
+    # faz com a cobra ande continuamente
+    x_cobra += x_controle
+    y_cobra += y_controle
 
     # desenha a cabeça da cobra e a maçã
     ret_cobra = pygame.draw.rect(tela, (0, 255, 0), (x_cobra, y_cobra, 40, 40))
     ret_maca = pygame.draw.rect(tela, (255, 0, 0), (x_maca, y_maca, 40, 40))
-
-    # controles
-
 
     # lista da cabeça da cobra
     lista_cabeca = []
